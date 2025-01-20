@@ -24,6 +24,7 @@ contract DataLocations {
         MyStruct storage _myStruct
     ) internal {
         // do something with the storage vars
+        // test comment
     }
 
     
