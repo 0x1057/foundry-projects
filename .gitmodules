@@ -7,3 +7,6 @@
 [submodule "scp/lib/forge-std"]
 	path = scp/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/rari-capital/solmate
