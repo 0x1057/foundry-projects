@@ -10,3 +10,6 @@
 [submodule "scp/lib/solmate"]
 	path = scp/lib/solmate
 	url = https://github.com/rari-capital/solmate
+[submodule "simple-storage/lib/forge-std"]
+	path = simple-storage/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
