@@ -27,6 +27,11 @@ contract DataLocations {
         // test comment
     }
 
-    
+    function g(uint256[] memory arr) public returns (uint256[] memory) {
+        // do something with mem arr
+    }
+
+    function h(uint256[] calldata _arr) external {
+        // do something with calldata array
     }
 }
