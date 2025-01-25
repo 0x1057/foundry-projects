@@ -7,6 +7,7 @@ import {DeployFundMe} from "../script/DeployFundMe.s.sol";
 
 contract FundMeTest is Test {
     FundMe fundMe;
+
     function setUp() external {
         //fundMe = new FundMe(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF);
         DeployFundMe deployFundMe = new DeployFundMe();
