@@ -11,6 +11,7 @@ contract FundMeTest is Test {
     address USER = makeAddr("user");
     uint256 constant SEND_VALUE = 0.1 ether; // 100000000000000000
     uint256 constant STARTING_BALANCE = 10 ether;
+    uint256 constant GAS_PRICE = 1;
 
     function setUp() external {
         //fundMe = new FundMe(0xfEefF7c3fB57d18C5C6Cdd71e45D2D0b4F9377bF);
@@ -61,18 +62,29 @@ contract FundMeTest is Test {
     function testOnlyOwnerCanWithdraw() public funded {
         vm.expectRevert();
         vm.prank(USER);
-        fundMe.withdraw();
+        fundMe.cheaperWithdraw();
     }
 
-    function testWithdrawWithASingleFunder() public funded {
-        uint256 startingOwnerBalance = fundMe.getOwner().balance;
+    function testWithdrawFromASingleFunder() public funded {
+        // Arrange
         uint256 startingFundMeBalance = address(fundMe).balance;
+        uint256 startingOwnerBalance = fundMe.getOwner().balance;
 
-        vm.prank(fundMe.getOwner());
-        fundMe.withdraw();
+        vm.txGasPrice(GAS_PRICE);
+        uint256 gasStart = gasleft();
 
-        uint256 endingOwnerBalance = fundMe.getOwner().balance;
+        // Act
+        vm.startPrank(fundMe.getOwner());
+        fundMe.cheaperWithdraw();
+        vm.stopPrank();
+
+        uint256 gasEnd = gasleft();
+        uint256 gasUsed = (gasStart - gasEnd) * tx.gasprice;
+        console.log("Withdraw consumed: %d gas", gasUsed);
+
+        // Assert
         uint256 endingFundMeBalance = address(fundMe).balance;
+        uint256 endingOwnerBalance = fundMe.getOwner().balance;
         assertEq(endingFundMeBalance, 0);
         assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
@@ -90,8 +102,23 @@ contract FundMeTest is Test {
         uint256 startingOwnerBalance = fundMe.getOwner().balance;
         uint256 startingFundMeBalance = address(fundMe).balance;
 
-        vm.prank(fundMe.getOwner());
-        fundMe.withdraw();
+        vm.startPrank(fundMe.getOwner());
+        fundMe.cheaperWithdraw();
+        vm.stopPrank();
+
+        assert(address(fundMe).balance == 0);
+        assert(startingFundMeBalance + startingOwnerBalance == fundMe.getOwner().balance);
+        assert((numberOfFunders + 1) * SEND_VALUE == fundMe.getOwner().balance - startingOwnerBalance);
+
+    }
+
+    function testPrintStorageData() public view {
+        for(uint256 i = 0; i < 3; i++) {
+            bytes32 value = vm.load(address(fundMe), bytes32(i));
+            console.log("Value at location", i, ":");
+            console.logBytes32(value);
+        }
+        console.log("PriceFeed address:", address(fundMe.getPriceFeed()));
     }
 
     
