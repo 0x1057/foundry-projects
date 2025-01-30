@@ -11,7 +11,7 @@ contract ManualToken {
     }
 
     function totalSupply() public pure returns (uint256) {
-        return 100 ether;
+        return 100 ether; // 1000000000000000000
     }
 
     function decimals() public pure returns (uint8) {
@@ -27,6 +27,6 @@ contract ManualToken {
         s_balances[msg.sender] -= _amount;
         s_balances[_to] += _amount;
 
-        require(s_balances(msg.sender) + s_balances(_to) == previousBalance);
+        require(balanceOf(msg.sender) + balanceOf(_to) == previousBalance);
     }
 }
